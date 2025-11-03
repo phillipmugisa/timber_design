@@ -44,27 +44,8 @@ class UI:
             self.addInputFieldToUI(self.checks)
 
     def getMemberChecks(self, option: int):
-        if option == 1:
-            self.checks = ['flexure', 'shear', 'bearing', 'deflection']
-        elif option == 2:
-            self.checks = ['compression']
-        elif option == 3:
-            self.checks = ['tension']
-        elif option == 4:
-            self.checks = ['compression']
-        elif option == 5:
-            self.checks = ['flexure']
-        elif option == 6:
-            self.checks = ['compression']
-        elif option == 7:
-            self.checks = ['flexure', 'shear']
-        elif option == 8:
-            self.checks = ['flexure', 'shear', 'bearing']
-        elif option == 9:
-            self.checks = ['tension', 'compression', 'shear', 'bearing']
-        elif option == 10:
-            self.checks = ['bearing']
-
+        from design import get_checks_for_member
+        self.checks = get_checks_for_member(option)
 
     def onMemberSelect(self):
         member = self.member_var.get()
@@ -181,7 +162,7 @@ class UI:
 
         # Define form fields
         fields = []
-        if 'tension' in checks or 'compression' in checks or 'deflection' in checks:
+        if 'tension' in checks or 'compression' in checks:
             fields = [
                 ("Permanent Load (kN)", "permanent_load"),
                 ("Variable Load (kN)", "variable_load")
@@ -286,13 +267,12 @@ class UI:
             self.youngs_modulus = ttk.Entry(self.rightArea)
             self.youngs_modulus.grid(row=22, column=1, pady=5, padx=5)
 
-        if 'shear' in checks or 'flexure' in checks:
-            ttk.Label(self.rightArea, text="Permanent Load for (shear/flexure) (KN/m^2)").grid(row=23, column=0, sticky="w", pady=5, padx=5)
+        if 'shear' in checks or 'flexure' in checks or 'bearing' in checks or 'deflection' in checks:
+            ttk.Label(self.rightArea, text="Permanent Load (KN/m^2)").grid(row=23, column=0, sticky="w", pady=5, padx=5)
             self.permanent_load_per_square_m = ttk.Entry(self.rightArea)
             self.permanent_load_per_square_m.grid(row=23, column=1, pady=5, padx=5)
 
-            
-            ttk.Label(self.rightArea, text="Variable Load for (shear/flexure) (KN/m^2)").grid(row=24, column=0, sticky="w", pady=5, padx=5)
+            ttk.Label(self.rightArea, text="Variable Load (KN/m^2)").grid(row=24, column=0, sticky="w", pady=5, padx=5)
             self.variable_load__per_square_m = ttk.Entry(self.rightArea)
             self.variable_load__per_square_m.grid(row=24, column=1, pady=5, padx=5)
 

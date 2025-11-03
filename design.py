@@ -22,10 +22,9 @@ def perform_checks(checks : List[str], source, mode : str='cmd') -> List[Tuple[s
 
     permanent_load = 0
     variable_load = 0
-    if 'tension' in checks or 'compression' in checks or 'deflection' in checks:
+    if 'tension' in checks or 'compression' in checks:
         permanent_load = get_numeric_input('permanent_load', "Enter the permanent load (kN): ", mode, source)
         variable_load = get_numeric_input('variable_load', "Enter the variable load (kN): ", mode, source)
-
 
     if mode == 'gui' and source is not None:
         service_class = int(source.get_field_value('service_class'))
@@ -59,7 +58,7 @@ def perform_checks(checks : List[str], source, mode : str='cmd') -> List[Tuple[s
     permanent_load_per_square_m = 0
     variable_load__per_square_m = 0
 
-    if 'shear' in checks or 'flexure' in checks or 'bearing' in checks:
+    if 'shear' in checks or 'flexure' in checks or 'bearing' in checks or 'deflection' in checks:
         # convert from KN/m^2 to KN/mm^2
         permanent_load_per_square_m = get_numeric_input('permanent_load_per_square_m', "Enter the permanent load(shear/flexure)(kN/m^2):", mode, source)
         variable_load__per_square_m = get_numeric_input('variable_load__per_square_m', "Enter the variable load(shear/flexure)(kN/m^2):", mode, source)
@@ -100,7 +99,6 @@ def perform_checks(checks : List[str], source, mode : str='cmd') -> List[Tuple[s
 
     if 'deflection' in checks:
         print('\nProvide values for Deflection')
-        tributory_width = get_numeric_input('tributory_width', "Enter the tributory width(mm): ", mode, source)
         K_def = get_numeric_input('K_def', "Enter the K_def: ", mode, source)
         qausi_permanent_value_for_variable_load = get_numeric_input(
             'qausi_permanent_value_for_variable_load',
@@ -154,32 +152,33 @@ def perform_specific_check(option: int = 0):
         return perform_checks(checks, source=None)
     return [('', False, '')]
 
-def design_a_member(option:int = 0):
+def get_checks_for_member(option : int = 1):
+    if option == 1:
+        return ['flexure', 'shear', 'bearing', 'deflection']
+    elif option == 2:
+        return ['compression']
+    elif option == 3:
+        return ['tension']
+    elif option == 4:
+        return ['compression']
+    elif option == 5:
+        return ['flexure']
+    elif option == 6:
+        return ['compression']
+    elif option == 7:
+        return ['flexure', 'shear']
+    elif option == 8:
+        return ['flexure', 'shear', 'bearing', 'deflection']
+    elif option == 9:
+        return ['tension', 'compression', 'shear', 'bearing']
+    elif option == 10:
+        return ['bearing']
+
+def design_a_member(option:int = 1):
     if not option:
         option = int(input("Select desired member 1(Beam), 2(Column), 3(Ties), 4(Struts), 5(Tie Beam), 6(Studs), 7(Joists), 8(Header Plate), 9(Rafter), 10(Base Plate): "))
 
-    checks = []
-    if option == 1:
-        checks = ['flexure', 'shear', 'bearing', 'deflection']
-    elif option == 2:
-        checks = ['compression']
-    elif option == 3:
-        checks = ['tension']
-    elif option == 4:
-        checks = ['compression']
-    elif option == 5:
-        checks = ['flexure']
-    elif option == 6:
-        checks = ['compression']
-    elif option == 7:
-        checks = ['flexure', 'shear']
-    elif option == 8:
-        checks = ['flexure', 'shear', 'bearing']
-    elif option == 9:
-        checks = ['tension', 'compression', 'shear', 'bearing']
-    elif option == 10:
-        checks = ['bearing']
-
+    checks = get_checks_for_member(option)
     if checks:
         return perform_checks(checks, source=None)
     return [('', False, '')]

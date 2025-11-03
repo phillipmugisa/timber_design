@@ -8,15 +8,15 @@ def U_inst(action, length, youngs_modulus, area, second_moment_of_area):
     return bending +  shear
 
 def check_for_deflection(permanent_load, variable_load, width, depth, length, tributory_width, K_def, qausi_permanent_value_for_variable_load, youngs_modulus):
-    # convert loads from kN/m to KN/mm
-    permanent_load = permanent_load / 1000
-    variable_load = variable_load / 1000
+    # expects KN/mm^2
+    fd_g = permanent_load * tributory_width * length
+    fd_q = variable_load * tributory_width * length
 
     area = width * depth
     second_moment_of_area = (width * (depth ** 3)) / 12
 
-    deflection_value_for_permanent_loads = U_inst(permanent_load * tributory_width * length, length, youngs_modulus, area, second_moment_of_area) * (1 + K_def)
-    deflection_value_for_variable_loads = U_inst(variable_load * tributory_width * length, length, youngs_modulus, area, second_moment_of_area) * (1 + (qausi_permanent_value_for_variable_load) * K_def)
+    deflection_value_for_permanent_loads = U_inst(fd_g, length, youngs_modulus, area, second_moment_of_area) * (1 + K_def)
+    deflection_value_for_variable_loads = U_inst(fd_q, length, youngs_modulus, area, second_moment_of_area) * (1 + (qausi_permanent_value_for_variable_load) * K_def)
 
     msg = ''
     final_deflection = round(deflection_value_for_permanent_loads + deflection_value_for_variable_loads, 3)
